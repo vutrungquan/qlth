@@ -1,12 +1,11 @@
 package org.example.qlth1.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Getter
@@ -19,9 +18,8 @@ import lombok.experimental.FieldDefaults;
 public class Permission {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private String name;
 
     private String description;
+
 }

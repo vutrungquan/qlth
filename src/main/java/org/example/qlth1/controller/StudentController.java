@@ -20,7 +20,7 @@ import java.util.List;
 public class StudentController {
     StudentService studentService;
 
-    @PreAuthorize("hasAuthority('STUDENT_ROLE')")
+    @PreAuthorize("hasRole('STUDENT_ROLE')")
     @GetMapping("/score")
     public ResponseEntity<ApiResponse<List<StudentResponse>>> viewScores() {
         var scores = studentService.getAllStudents();

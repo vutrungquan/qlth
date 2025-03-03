@@ -4,25 +4,22 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.example.qlth1.dto.request.AssignRoleRequest;
 import org.example.qlth1.dto.request.SchoolClassRequest;
 import org.example.qlth1.dto.request.SubjectRequest;
 import org.example.qlth1.dto.request.TeacherRequest;
-import org.example.qlth1.dto.response.SchoolClassResponse;
-import org.example.qlth1.dto.response.SubjectResponse;
-import org.example.qlth1.dto.response.TeacherResponse;
-import org.example.qlth1.entity.SchoolClass;
-import org.example.qlth1.entity.Subject;
-import org.example.qlth1.entity.Teacher;
+import org.example.qlth1.dto.response.*;
+import org.example.qlth1.entity.*;
 import org.example.qlth1.exception.AppException;
 import org.example.qlth1.exception.ErrorCode;
-import org.example.qlth1.repository.SchoolClassRepository;
-import org.example.qlth1.repository.SubjectRepository;
-import org.example.qlth1.repository.TeacherRepository;
+import org.example.qlth1.repository.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +31,8 @@ public class AdminService {
     TeacherRepository teacherRepository;
     SubjectRepository subjectRepository;
     SchoolClassRepository schoolClassRepository;
-
+    UserRepository userRepository;
+    RoleRepository roleRepository;
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
@@ -213,6 +211,55 @@ public class AdminService {
         return SchoolClassResponse.builder()
                 .classCode(schoolClass.getClassCode())
                 .className(schoolClass.getClassName())
+                .build();
+    }
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse assignRolesToUser(AssignRoleRequest request) {
+        // Tìm user theo username
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        // Tìm và validate tất cả roles
+        Set<Role> roles = new HashSet<>();
+        for (String roleName : request.getRoleNames()) {
+            Role role = roleRepository.findByName(roleName)
+                    .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+            roles.add(role);
+        }
+
+        // Gán roles cho user
+        user.setRoles(roles);
+        user = userRepository.save(user);
+        
+        log.info("Assigned roles {} to user {}", request.getRoleNames(), request.getUsername());
+        
+        // Convert và trả về response
+        return convertToUserResponse(user);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::convertToUserResponse)
+                .collect(Collectors.toList());
+    }
+    private UserResponse convertToUserResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .roles(user.getRoles().stream()
+                        .map(role -> RoleResponse.builder()
+                                .name(role.getName())
+                                .description(role.getDescription())
+                                .permissions(role.getPermissions().stream()
+                                        .map(permission -> PermissionResponse.builder()
+                                                .name(permission.getName())
+                                                .description(permission.getDescription())
+                                                .build())
+                                        .collect(Collectors.toSet()))
+                                .build())
+                        .collect(Collectors.toSet()))
                 .build();
     }
 }

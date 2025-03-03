@@ -60,8 +60,8 @@ public class AuthService {
         }
 
        
-        Role studentRole = roleRepository.findByName(PredefinedRole.STUDENT_ROLE.name())
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        Role studentRole = roleRepository.findByName("STUDENT")
+            .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
         User user = User.builder()
                 .username(request.getUsername())
@@ -151,7 +151,6 @@ public class AuthService {
         }
     }
 
-
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
@@ -199,20 +198,27 @@ public class AuthService {
         }
     }
 
-
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-
-        if (!CollectionUtils.isEmpty(user.getRoles()))
-        log.info("User roles: {}", user.getRoles());
+        if (!CollectionUtils.isEmpty(user.getRoles())) {
+            log.debug("Building scope for user: {} with roles: {}", user.getUsername(), user.getRoles());
             user.getRoles().forEach(role -> {
-                stringJoiner.add("ROLE_" + role.getName());
-                if (!CollectionUtils.isEmpty(role.getPermissions()))
-                    role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
+                String roleScope = "ROLE_" + role.getName();
+                stringJoiner.add(roleScope);
+                log.debug("Added role scope: {}", roleScope);
+                
+                if (!CollectionUtils.isEmpty(role.getPermissions())) {
+                    role.getPermissions().forEach(permission -> {
+                        String permissionScope = permission.getName();
+                        stringJoiner.add(permissionScope);
+                        log.debug("Added permission scope: {}", permissionScope);
+                    });
+                }
             });
-
-        return stringJoiner.toString();
+        }
+        String finalScope = stringJoiner.toString();
+        log.debug("Final scope for user {}: {}", user.getUsername(), finalScope);
+        return finalScope;
     }
-
 
 }

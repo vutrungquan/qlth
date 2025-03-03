@@ -22,7 +22,7 @@ public class TeacherController {
     TeacherService teacherService;
 
     // Quản lý thông tin Học sinh do giáo viên phụ trách
-    @PreAuthorize("hasAuthority('TEACHER_ROLE')")
+    @PreAuthorize("hasRole('TEACHER_ROLE')")
     @PutMapping("/student/{studentId}")
     public ResponseEntity<ApiResponse<String>> updateStudent(@PathVariable Long studentId, @Valid @RequestBody StudentRequest studentRequest) {
         teacherService.updateStudent(studentId, studentRequest);
@@ -33,7 +33,7 @@ public class TeacherController {
         );
     }
 
-    @PreAuthorize("hasAuthority('TEACHER_ROLE')")
+    @PreAuthorize("hasRole('TEACHER_ROLE')")
     @DeleteMapping("/student/{studentId}")
     public ResponseEntity<ApiResponse<String>> deleteStudent(@PathVariable Long studentId) {
         teacherService.deleteStudent(studentId);
@@ -45,7 +45,7 @@ public class TeacherController {
     }
 
     // Quản lý Điểm cho Học sinh
-    @PreAuthorize("hasAuthority('TEACHER_ROLE')")
+    @PreAuthorize("hasRole('TEACHER_ROLE')")
     @PostMapping("/score")
     public ResponseEntity<ApiResponse<String>> addScore(@Valid @RequestBody ScoreRequest scoreRequest) {
         teacherService.addScore(scoreRequest);
@@ -56,7 +56,7 @@ public class TeacherController {
         );
     }
 
-    @PreAuthorize("hasAuthority('TEACHER_ROLE')")
+    @PreAuthorize("hasRole('TEACHER_ROLE')")
     @PutMapping("/score/{scoreId}")
     public ResponseEntity<ApiResponse<String>> updateScore(@PathVariable Long scoreId, @Valid @RequestBody ScoreRequest scoreRequest) {
         teacherService.updateScore(scoreId, scoreRequest);
@@ -67,7 +67,7 @@ public class TeacherController {
         );
     }
 
-    @PreAuthorize("hasAuthority('TEACHER_ROLE')")
+    @PreAuthorize("hasRole('TEACHER_ROLE')")
     @DeleteMapping("/score/{scoreId}")
     public ResponseEntity<ApiResponse<String>> deleteScore(@PathVariable Long scoreId) {
         teacherService.deleteScore(scoreId);

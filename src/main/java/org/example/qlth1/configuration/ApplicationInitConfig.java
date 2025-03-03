@@ -41,19 +41,19 @@ public class ApplicationInitConfig {
             if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
                 
                 Role adminRole = roleRepository.save(Role.builder()
-                            .name(PredefinedRole.ADMIN_ROLE.name())
+                            .name(PredefinedRole.ADMIN_ROLE)
                             .description("Admin role")
                             .build());
                 
                 
                     roleRepository.save(Role.builder()
-                            .name(PredefinedRole.TEACHER_ROLE.name())
+                            .name(PredefinedRole.TEACHER_ROLE)
                             .description("Teacher role")
                             .build());
                 
                 
                     roleRepository.save(Role.builder()
-                            .name(PredefinedRole.STUDENT_ROLE.name())
+                            .name(PredefinedRole.STUDENT_ROLE)
                             .description("Student role")
                             .build());
                 
