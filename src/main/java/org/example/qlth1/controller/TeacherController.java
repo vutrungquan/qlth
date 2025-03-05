@@ -3,8 +3,9 @@ package org.example.qlth1.controller;
 import jakarta.validation.Valid;
 import org.example.qlth1.dto.request.ScoreRequest;
 import org.example.qlth1.dto.request.StudentRequest;
+import org.example.qlth1.dto.response.TeacherClassesSubjectsResponse;
 import org.example.qlth1.service.TeacherService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,59 +23,64 @@ public class TeacherController {
     TeacherService teacherService;
 
     // Quản lý thông tin Học sinh do giáo viên phụ trách
-    @PreAuthorize("hasRole('TEACHER_ROLE')")
+    @PreAuthorize("hasRole('TEACHER')")
     @PutMapping("/student/{studentId}")
-    public ResponseEntity<ApiResponse<String>> updateStudent(@PathVariable Long studentId, @Valid @RequestBody StudentRequest studentRequest) {
+    public ApiResponse<String> updateStudent(@PathVariable Long studentId, @Valid @RequestBody StudentRequest studentRequest) {
         teacherService.updateStudent(studentId, studentRequest);
-        return ResponseEntity.ok(
-            ApiResponse.<String>builder()
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
                 .result("Cập nhật thông tin học sinh thành công")
-                .build()
-        );
+                .build();
     }
 
-    @PreAuthorize("hasRole('TEACHER_ROLE')")
+    @PreAuthorize("hasRole('TEACHER')")
     @DeleteMapping("/student/{studentId}")
-    public ResponseEntity<ApiResponse<String>> deleteStudent(@PathVariable Long studentId) {
+    public ApiResponse<String> deleteStudent(@PathVariable Long studentId) {
         teacherService.deleteStudent(studentId);
-        return ResponseEntity.ok(
-            ApiResponse.<String>builder()
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
                 .result("Xóa học sinh thành công")
-                .build()
-        );
+                .build();
     }
 
     // Quản lý Điểm cho Học sinh
-    @PreAuthorize("hasRole('TEACHER_ROLE')")
+    @PreAuthorize("hasRole('TEACHER')")
     @PostMapping("/score")
-    public ResponseEntity<ApiResponse<String>> addScore(@Valid @RequestBody ScoreRequest scoreRequest) {
+    public ApiResponse<String> addScore(@Valid @RequestBody ScoreRequest scoreRequest) {
         teacherService.addScore(scoreRequest);
-        return ResponseEntity.ok(
-            ApiResponse.<String>builder()
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
                 .result("Thêm điểm thành công")
-                .build()
-        );
+                .build();
     }
 
-    @PreAuthorize("hasRole('TEACHER_ROLE')")
+    @PreAuthorize("hasRole('TEACHER')")
     @PutMapping("/score/{scoreId}")
-    public ResponseEntity<ApiResponse<String>> updateScore(@PathVariable Long scoreId, @Valid @RequestBody ScoreRequest scoreRequest) {
+    public ApiResponse<String> updateScore(@PathVariable Long scoreId, @Valid @RequestBody ScoreRequest scoreRequest) {
         teacherService.updateScore(scoreId, scoreRequest);
-        return ResponseEntity.ok(
-            ApiResponse.<String>builder()
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
                 .result("Cập nhật điểm thành công")
-                .build()
-        );
+                .build();
     }
 
-    @PreAuthorize("hasRole('TEACHER_ROLE')")
+    @PreAuthorize("hasRole('TEACHER')")
     @DeleteMapping("/score/{scoreId}")
-    public ResponseEntity<ApiResponse<String>> deleteScore(@PathVariable Long scoreId) {
+    public ApiResponse<String> deleteScore(@PathVariable Long scoreId) {
         teacherService.deleteScore(scoreId);
-        return ResponseEntity.ok(
-            ApiResponse.<String>builder()
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
                 .result("Xóa điểm thành công")
-                .build()
-        );
+                .build();
     }
+   @PreAuthorize("hasRole('TEACHER')")
+   @GetMapping("/classessubjects")
+   public ApiResponse<TeacherClassesSubjectsResponse> getClassesAndSubjects() {
+       TeacherClassesSubjectsResponse response = teacherService.getClassesAndSubjects();
+       return ApiResponse.<TeacherClassesSubjectsResponse>builder()
+                .code(HttpStatus.OK.value())
+                .result(response)
+                .message("Lấy danh sách lớp học và môn học thành công")
+                .build();
+   }
 }

@@ -1,6 +1,5 @@
 package org.example.qlth1.entity;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;

@@ -22,6 +22,10 @@ public class Teacher {
     private String phone;
     private LocalDate birthDate;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user; // Liên kết với bảng user
+
     @ManyToMany
     @JoinTable(name = "teacher_class",
             joinColumns = @JoinColumn(name = "teacher_id"),

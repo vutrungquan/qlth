@@ -5,17 +5,13 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.qlth1.constant.PredefinedRole;
 import org.example.qlth1.dto.request.IntrospectRequest;
 import org.example.qlth1.dto.request.LogoutRequest;
 import org.example.qlth1.dto.request.RefreshRequest;
 import org.example.qlth1.dto.response.IntrospectResponse;
 import org.example.qlth1.entity.InvalidatedToken;
-import org.example.qlth1.entity.Role;
 import org.example.qlth1.entity.User;
 import org.example.qlth1.exception.AppException;
 import org.example.qlth1.exception.ErrorCode;
@@ -29,10 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.example.qlth1.dto.request.AuthenticationRequest;
 import org.example.qlth1.dto.response.AuthenticationResponse;
-import org.example.qlth1.dto.request.RegisterRequest;
 import org.example.qlth1.dto.response.JwtResponse;
 import org.example.qlth1.dto.request.LoginRequest;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -54,23 +48,7 @@ public class AuthService {
     @Value("${jwt.refreshable-duration}")   
     protected long refreshableDuration;
 
-    public void register(RegisterRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new AppException(ErrorCode.USER_EXISTED);
-        }
 
-       
-        Role studentRole = roleRepository.findByName("STUDENT")
-            .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
-
-        User user = User.builder()
-                .username(request.getUsername())
-                .password(new BCryptPasswordEncoder(10).encode(request.getPassword()))
-                .roles(Set.of(studentRole))  
-                .build();
-
-        userRepository.save(user);
-    }
 
     public JwtResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
@@ -86,9 +64,7 @@ public class AuthService {
                 .tokenType("Bearer")
                 .build();
     }
-    /**
-     * Kiểm tra tính hợp lệ của token.
-     */
+
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException {
         String token = request.getToken();
         boolean isValid = true;
@@ -177,7 +153,6 @@ public class AuthService {
         }
     }
 
- 
     private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException {
         try {
             JWSVerifier verifier = new MACVerifier(signerKey.getBytes());

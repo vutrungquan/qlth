@@ -8,8 +8,6 @@ import org.example.qlth1.dto.response.AuthenticationResponse;
 import org.example.qlth1.dto.response.IntrospectResponse;
 import org.example.qlth1.service.AuthService;
 import com.nimbusds.jose.JOSEException;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -19,14 +17,8 @@ import java.text.ParseException;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
-    final AuthService authService;
+     AuthService authService;
     
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-        authService.register(request);
-        return ResponseEntity.ok("User registered successfully");
-    }
-
     @PostMapping("/token")
     public ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         var result = authService.authenticate(request);
