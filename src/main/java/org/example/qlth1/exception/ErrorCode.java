@@ -26,7 +26,8 @@ public enum ErrorCode {
     CLASS_EXISTED(2006, "The class code already exists", HttpStatus.BAD_REQUEST),
     ROLE_NOT_FOUND(2007, "Role not found", HttpStatus.NOT_FOUND),
     INVALID_ROLE_ASSIGNMENT(2008, "Không thể gán vai trò cho người dùng", HttpStatus.BAD_REQUEST),
-    ROLE_ALREADY_ASSIGNED(2009, "Người dùng đã có vai trò này", HttpStatus.BAD_REQUEST);
+    ROLE_ALREADY_ASSIGNED(2009, "Người dùng đã có vai trò này", HttpStatus.BAD_REQUEST),
+    DATA_NOT_FOUND(2010, "No data found", HttpStatus.NOT_FOUND);
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
         this.message = message;

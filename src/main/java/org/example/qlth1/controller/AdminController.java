@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 import org.springframework.http.HttpStatus;
 import java.util.List;
-
+import org.example.qlth1.service.TimetableService;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminController {
 
     private final AdminService adminService;
-
+    private final TimetableService timetableService;
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/teacher")
     public ApiResponse<TeacherResponse> createTeacher(@Valid @RequestBody TeacherCreateRequest teacherRequest) {
@@ -155,6 +155,16 @@ public class AdminController {
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
                 .message("Gán môn học cho giáo viên thành công")
+                .build();
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/generate")
+    public ApiResponse<String> generateTimetable(@RequestParam(defaultValue = "4") int weeks) {
+        timetableService.generateTimetableData(weeks);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .result("Đã tạo thành công thời khóa biểu cho " + weeks + " tuần")
+                .message("Tạo thời khóa biểu thành công")
                 .build();
     }
 }
