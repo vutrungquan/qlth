@@ -254,6 +254,7 @@ public class AdminService {
                     .orElseThrow(() -> new AppException(ErrorCode.CLASS_NOT_FOUND));
             classes.add(schoolClass);
         }
+        teacher.setClasses(classes);
         teacherRepository.save(teacher);
     }
     @Transactional

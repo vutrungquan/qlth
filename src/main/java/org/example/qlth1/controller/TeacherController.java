@@ -15,6 +15,8 @@ import lombok.experimental.FieldDefaults;
 
 import org.example.qlth1.dto.request.ApiResponse;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/teacher")
 @RequiredArgsConstructor
@@ -44,13 +46,14 @@ public class TeacherController {
     }
 
     // Quản lý Điểm cho Học sinh
+
     @PreAuthorize("hasRole('TEACHER')")
-    @PostMapping("/score")
-    public ApiResponse<String> addScore(@Valid @RequestBody ScoreRequest scoreRequest) {
-        teacherService.addScore(scoreRequest);
+    @PostMapping("/student/{studentId}/scores")
+    public ApiResponse<String> addScores(@PathVariable Long studentId, @Valid @RequestBody List<ScoreRequest> scoreRequests) {
+        teacherService.addScoresForStudent(studentId, scoreRequests);
         return ApiResponse.<String>builder()
-                .code(HttpStatus.OK.value())
-                .result("Thêm điểm thành công")
+                .code(HttpStatus.CREATED.value())
+                .result("Thêm điểm cho học sinh thành công")
                 .build();
     }
 
